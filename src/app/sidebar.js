@@ -125,7 +125,7 @@ export default function Sidebar({ open }) {
       },
       {
         menuID: 'cheque-invoice',
-        menuName: 'Cheque Details', // Using 'Details' as shown in design sidebar, or could use 'Invoice'
+        menuName: 'Cheque Invoice',
         menuPath: '/invoice/cheque-invoice'
       },
       {
@@ -147,6 +147,16 @@ export default function Sidebar({ open }) {
         menuID: 'online-payment-invoice',
         menuName: 'Card / UPI Invoice Report',
         menuPath: '/invoice/online-payment-invoice'
+      },
+      {
+        menuID: 'finance-reconciliation',
+        menuName: 'Finance Reconciliation',
+        menuPath: '/invoice/finance-reconciliation'
+      },
+      {
+        menuID: 'payment-collection',
+        menuName: 'Payment Collection',
+        menuPath: '/invoice/payment-collection'
       }
     ]
   };

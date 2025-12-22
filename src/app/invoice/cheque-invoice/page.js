@@ -6,13 +6,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import {
   Table,
   TableBody,
   TableCell,
@@ -20,25 +13,28 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Loader2, Settings, FileText, Search, X } from "lucide-react";
-
-// Hooks
-import { useChequeDetails } from "@/hooks/useInvoices";
-import { useDoctors } from "@/hooks/useDoctors";
+import { FileSpreadsheet, Settings } from "lucide-react";
 
 export default function ChequeInvoicePage() {
   const [filters, setFilters] = useState({
-    clinicName: "",
-    doctorName: "",
     patientName: "",
-    mobileNo: "",
-    fromPaymentDate: new Date().toISOString().split("T")[0],
-    toPaymentDate: new Date().toISOString().split("T")[0],
+    fromPaymentDate: "",
+    toPaymentDate: "",
   });
 
-  // Fetch Data
-  const { data: cheques = [], isLoading, error, refetch } = useChequeDetails(filters);
-  const { data: doctors = [] } = useDoctors();
+  // Mock data based on the screenshot
+  const mockData = [
+    { id: 1, invoiceNo: "INV173797", clinic: "Borivali", patient: "BHARAT JOSHI", bank: "Central Bank of India", branch: "DAHISAR", ifsc: "CBIN0282739", chequeNo: "771176", date: "30-Dec-2026", amount: "20000.00", clearDate: "", status: "Pending" },
+    { id: 2, invoiceNo: "INV173797", clinic: "Borivali", patient: "BHARAT JOSHI", bank: "Central Bank of India", branch: "DAHISAR", ifsc: "CBIN0282739", chequeNo: "771179", date: "03-Mar-2026", amount: "20000.00", clearDate: "", status: "Pending" },
+    { id: 3, invoiceNo: "INV173797", clinic: "Borivali", patient: "BHARAT JOSHI", bank: "Central Bank of India", branch: "DAHISAR", ifsc: "CBIN0282739", chequeNo: "771175", date: "30-Dec-2025", amount: "20000.00", clearDate: "", status: "Pending" },
+    { id: 4, invoiceNo: "INV191123", clinic: "KALYAN NAGAR", patient: "Rupa S Poojary", bank: "DBS BANK", branch: "Shivaji Nagar", ifsc: "DBSS0IN0162", chequeNo: "000359", date: "25-Dec-2025", amount: "25000.00", clearDate: "", status: "Pending" },
+    { id: 5, invoiceNo: "INV191123", clinic: "KALYAN NAGAR", patient: "Rupa S Poojary", bank: "DBS BANK", branch: "Shivaji Nagar", ifsc: "DBSS0IN0162", chequeNo: "000358", date: "15-Dec-2025", amount: "25000.00", clearDate: "", status: "Pending" },
+    { id: 6, invoiceNo: "INV192381", clinic: "Borivali", patient: "Reginald Colacor", bank: "Bassein catholic co operative Bank", branch: "Mandepeshwar", ifsc: "BACB0000028", chequeNo: "100014", date: "15-Dec-2025", amount: "18000.00", clearDate: "17-Dec-2025", status: "Cheque Clear" },
+    { id: 7, invoiceNo: "MAH002642526", clinic: "Borivali", patient: "Suresh Desai", bank: "Greater bank", branch: "Mira road", ifsc: "GBCB0000023", chequeNo: "315887", date: "15-Dec-2025", amount: "90000.00", clearDate: "18-Dec-2025", status: "Cheque Clear" },
+    { id: 8, invoiceNo: "INV186017", clinic: "Dombivali East", patient: "SHWETA MHATRE", bank: "BANK OF BARODA", branch: "NILJE GURAVALI", ifsc: "BARB0NILJEX", chequeNo: "000022", date: "15-Dec-2025", amount: "25000.00", clearDate: "19-Dec-2025", status: "Cheque Clear" },
+    { id: 9, invoiceNo: "INV147856", clinic: "Mysore", patient: "VEENA INNANJI", bank: "STATE BANK OF INDIA", branch: "SRIRAMPURA 2ND STAGE", ifsc: "SBIN0017797", chequeNo: "797011", date: "13-Dec-2025", amount: "10000.00", clearDate: "18-Dec-2025", status: "Cheque Clear" },
+    { id: 10, invoiceNo: "GUJ001812526", clinic: "Shahibaug", patient: "Bhawarlal Doshi", bank: "icici bank", branch: "shahibaug branch", ifsc: "ICIC0000294", chequeNo: "023227", date: "13-Dec-2025", amount: "10000.00", clearDate: "15-Dec-2025", status: "Cheque Clear" },
+  ];
 
   const handleFilterChange = (field, value) => {
     setFilters((prev) => ({
@@ -47,210 +43,116 @@ export default function ChequeInvoicePage() {
     }));
   };
 
-  const handleSearch = () => {
-    refetch();
-  };
-
-  const handleClear = () => {
-    setFilters({
-      clinicName: "",
-      doctorName: "",
-      patientName: "",
-      mobileNo: "",
-      fromPaymentDate: "",
-      toPaymentDate: "",
-    });
-  };
-
   return (
-    <div className="w-full p-4 space-y-6 min-h-screen transition-colors duration-300">
+    <div className="w-full p-4 space-y-6 min-h-screen bg-white dark:bg-gray-950">
       {/* Header */}
-      <div className="flex items-center gap-3 pb-2 border-b border-gray-200 dark:border-gray-800">
-        <div className="p-2 rounded-lg bg-red-50 dark:bg-red-900/20">
-             <Settings className="w-5 h-5 text-red-600 dark:text-red-400 animate-spin-slow" />
-        </div>
-        <h1 className="text-xl font-bold text-red-600 dark:text-red-400 tracking-tight uppercase">
-          CHEQUE INVOICE
-        </h1>
+      <div className="flex items-center gap-2">
+         <Settings className="w-5 h-5 text-red-500 animate-spin-slow" />
+         <h1 className="text-xl font-bold text-red-500 uppercase tracking-wide">
+            CHEQUE INVOICE
+         </h1>
       </div>
 
       {/* Filters Section */}
-      <Card className="border-border shadow-sm bg-card">
-        <CardContent className="p-6 space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                {/* Clinic Name */}
-                <div className="space-y-2">
-                <Label className="text-sm font-medium text-foreground/80">Clinic Name</Label>
-                <Select
-                    value={filters.clinicName}
-                    onValueChange={(val) => handleFilterChange("clinicName", val)}
-                >
-                    <SelectTrigger className="h-10 bg-background border-input">
-                    <SelectValue placeholder="-- Select Clinic --" />
-                    </SelectTrigger>
-                    <SelectContent>
-                    <SelectItem value="panvel">Panvel</SelectItem>
-                    <SelectItem value="pune">Pune</SelectItem>
-                    <SelectItem value="mumbai">Mumbai</SelectItem>
-                    <SelectItem value="nashik">Nashik</SelectItem>
-                    <SelectItem value="dwarka">Dwarka</SelectItem>
-                    <SelectItem value="vile-parle">Vile-Parle East</SelectItem>
-                    <SelectItem value="borivali">Borivali</SelectItem>
-                    <SelectItem value="kalyan-nagar">Kalyan Nagar</SelectItem>
-                    </SelectContent>
-                </Select>
-                </div>
+      <div className="grid grid-cols-1 md:grid-cols-12 gap-4 items-end bg-white dark:bg-gray-900 rounded-lg">
+        
+        {/* Patient Name */}
+        <div className="md:col-span-3 space-y-1">
+          <Input
+             className="h-9 bg-white border-gray-300"
+             placeholder="Patient Name"
+             value={filters.patientName}
+             onChange={(e) => handleFilterChange("patientName", e.target.value)}
+          />
+        </div>
 
-                {/* Doctor Name */}
-                <div className="space-y-2">
-                <Label className="text-sm font-medium text-foreground/80">Doctor Name</Label>
-                <Select
-                    value={filters.doctorName}
-                    onValueChange={(val) => handleFilterChange("doctorName", val)}
-                >
-                    <SelectTrigger className="h-10 bg-background border-input">
-                    <SelectValue placeholder="-- Select Doctor --" />
-                    </SelectTrigger>
-                    <SelectContent>
-                    {doctors.map((doc) => (
-                        <SelectItem key={doc.doctorID} value={doc.name}>
-                        {doc.name}
-                        </SelectItem>
-                    ))}
-                    </SelectContent>
-                </Select>
-                </div>
+         {/* From Date */}
+         <div className="md:col-span-3">
+          <Input
+             type="date"
+             className="h-9 bg-white border-gray-300"
+             placeholder="From Payment Date"
+             value={filters.fromPaymentDate}
+             onChange={(e) => handleFilterChange("fromPaymentDate", e.target.value)}
+          />
+        </div>
 
-                {/* Patient Name */}
-                <div className="space-y-2">
-                <Label className="text-sm font-medium text-foreground/80">Patient Name</Label>
-                <Input
-                    className="h-10 bg-background border-input"
-                    placeholder="Patient Name"
-                    value={filters.patientName}
-                    onChange={(e) => handleFilterChange("patientName", e.target.value)}
-                />
-                </div>
+         {/* To Date */}
+         <div className="md:col-span-3">
+          <Input
+             type="date"
+             className="h-9 bg-white border-gray-300"
+             placeholder="To Payment Date"
+             value={filters.toPaymentDate}
+             onChange={(e) => handleFilterChange("toPaymentDate", e.target.value)}
+          />
+        </div>
 
-                 {/* Mobile No */}
-                <div className="space-y-2">
-                <Label className="text-sm font-medium text-foreground/80">Mobile No</Label>
-                <Input
-                    className="h-10 bg-background border-input"
-                    placeholder="Mobile No"
-                    value={filters.mobileNo}
-                    onChange={(e) => handleFilterChange("mobileNo", e.target.value)}
-                />
-                </div>
-            </div>
-
-            {/* Second Row Filters & Buttons */}
-            <div className="flex flex-col md:flex-row gap-6 items-end justify-between">
-                <div className="flex flex-col md:flex-row gap-4 w-full md:w-auto">
-                    <div className="space-y-2 w-full md:w-48">
-                         <Input
-                            type="date"
-                            className="h-10 bg-background border-input"
-                            value={filters.fromPaymentDate}
-                            placeholder="From Payment Date"
-                            onChange={(e) => handleFilterChange("fromPaymentDate", e.target.value)}
-                        />
-                    </div>
-                    <div className="space-y-2 w-full md:w-48">
-                        <Input
-                            type="date"
-                            className="h-10 bg-background border-input"
-                            value={filters.toPaymentDate}
-                            placeholder="To Payment Date"
-                            onChange={(e) => handleFilterChange("toPaymentDate", e.target.value)}
-                        />
-                    </div>
-                </div>
-
-                <div className="flex gap-3 w-full md:w-auto">
-                    <Button
-                    onClick={handleSearch}
-                    className="bg-[#D35400] hover:bg-[#A04000] text-white font-semibold h-10 px-8 shadow-sm rounded"
-                    >
-                    Search
-                    </Button>
-                </div>
-            </div>
-        </CardContent>
-      </Card>
+        {/* Search Button */}
+        <div className="md:col-span-3 flex gap-2">
+            <Button
+                size="sm"
+                className="bg-[#C04000] hover:bg-[#A03000] text-white px-6 h-9 rounded-md"
+            >
+                Search
+            </Button>
+        </div>
+      </div>
 
       {/* Table Section */}
-      <Card className="border-border shadow-sm bg-card overflow-hidden">
-        <CardContent className="p-0">
-          <div className="overflow-x-auto">
-            {isLoading ? (
-               <div className="flex justify-center items-center py-20 text-muted-foreground">
-                  <Loader2 className="h-8 w-8 animate-spin mr-3" />
-                  <span>Loading data...</span>
-               </div>
-            ) : (
+      <div className="border border-gray-200 rounded-sm overflow-hidden bg-white shadow-sm">
+        <div className="overflow-x-auto">
             <Table>
-              <TableHeader className="bg-[#E8F8F5] dark:bg-green-900/20">
-                <TableRow className="border-b border-border hover:bg-transparent">
-                  <TableHead className="font-bold text-gray-800 dark:text-gray-200 text-xs h-10">Sr. No.</TableHead>
-                  <TableHead className="font-bold text-gray-800 dark:text-gray-200 text-xs h-10 w-24">Action</TableHead>
-                  <TableHead className="font-bold text-gray-800 dark:text-gray-200 text-xs h-10">Invoice No.</TableHead>
-                  <TableHead className="font-bold text-gray-800 dark:text-gray-200 text-xs h-10">Clinic Name</TableHead>
-                  <TableHead className="font-bold text-gray-800 dark:text-gray-200 text-xs h-10">Patient Name</TableHead>
-                  <TableHead className="font-bold text-gray-800 dark:text-gray-200 text-xs h-10">Bank Name</TableHead>
-                  <TableHead className="font-bold text-gray-800 dark:text-gray-200 text-xs h-10">Branch Name</TableHead>
-                  <TableHead className="font-bold text-gray-800 dark:text-gray-200 text-xs h-10">IFSC</TableHead>
-                  <TableHead className="font-bold text-gray-800 dark:text-gray-200 text-xs h-10">Cheque No</TableHead>
-                  <TableHead className="font-bold text-gray-800 dark:text-gray-200 text-xs h-10">Date</TableHead>
-                  <TableHead className="font-bold text-gray-800 dark:text-gray-200 text-xs h-10">Amount</TableHead>
-                  <TableHead className="font-bold text-gray-800 dark:text-gray-200 text-xs h-10">Status</TableHead>
+              <TableHeader className="bg-[#E6FFCC] hover:bg-[#E6FFCC]">
+                <TableRow className="border-b border-gray-100 hover:bg-[#E6FFCC]">
+                  <TableHead className="text-xs font-bold text-gray-700 h-10 w-12">Sr. No.</TableHead>
+                  <TableHead className="text-xs font-bold text-gray-700 h-10">Invoice No.</TableHead>
+                  <TableHead className="text-xs font-bold text-gray-700 h-10">Clinic Name</TableHead>
+                  <TableHead className="text-xs font-bold text-gray-700 h-10">Patient Name</TableHead>
+                  <TableHead className="text-xs font-bold text-gray-700 h-10">Bank Name</TableHead>
+                  <TableHead className="text-xs font-bold text-gray-700 h-10">Branch Name</TableHead>
+                  <TableHead className="text-xs font-bold text-gray-700 h-10">IFSC</TableHead>
+                  <TableHead className="text-xs font-bold text-gray-700 h-10">Cheque No</TableHead>
+                  <TableHead className="text-xs font-bold text-gray-700 h-10">Date</TableHead>
+                  <TableHead className="text-xs font-bold text-gray-700 h-10">Amount</TableHead>
+                  <TableHead className="text-xs font-bold text-gray-700 h-10">Cheque Clear Date</TableHead>
+                  <TableHead className="text-xs font-bold text-gray-700 h-10">Status</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {cheques.length > 0 ? (
-                  cheques.map((item, index) => (
-                    <TableRow key={index} className="border-b border-border hover:bg-muted/30 transition-colors h-12">
-                      <TableCell className="text-xs font-medium text-muted-foreground">{index + 1}</TableCell>
-                      <TableCell>
-                          <Button
-                            size="sm"
-                            className={`h-7 text-[10px] w-16 px-0 ${
-                                item.status === 'Pending'
-                                ? 'bg-[#1F618D] hover:bg-[#154360]' // Blue
-                                : 'bg-[#52BE80] hover:bg-[#27AE60]' // Green
-                            } text-white rounded`}
-                          >
-                            Select
-                          </Button>
-                      </TableCell>
-                      <TableCell className="text-xs font-medium">{item.invoiceNo}</TableCell>
-                      <TableCell className="text-xs">{item.clinicName}</TableCell>
-                      <TableCell className="text-xs font-medium">{item.patientName}</TableCell>
-                      <TableCell className="text-xs">{item.bankName}</TableCell>
-                      <TableCell className="text-xs">{item.branchName}</TableCell>
-                      <TableCell className="text-xs">{item.ifsc}</TableCell>
-                      <TableCell className="text-xs">{item.chequeNo}</TableCell>
-                      <TableCell className="text-xs">{item.date}</TableCell>
-                      <TableCell className="text-xs">{Number(item.amount).toFixed(2)}</TableCell>
-                      <TableCell className="text-xs">{item.status}</TableCell>
+                {mockData.map((row, index) => (
+                    <TableRow key={row.id} className="border-b border-gray-50 hover:bg-gray-50 text-xs">
+                      <TableCell className="py-2 text-gray-600">{row.id}</TableCell>
+                      <TableCell className="py-2 text-gray-600">{row.invoiceNo}</TableCell>
+                      <TableCell className="py-2 text-gray-600">{row.clinic}</TableCell>
+                      <TableCell className="py-2 text-gray-600 uppercase">{row.patient}</TableCell>
+                      <TableCell className="py-2 text-gray-600 uppercase">{row.bank}</TableCell>
+                      <TableCell className="py-2 text-gray-600 uppercase">{row.branch}</TableCell>
+                      <TableCell className="py-2 text-gray-600">{row.ifsc}</TableCell>
+                      <TableCell className="py-2 text-gray-600">{row.chequeNo}</TableCell>
+                      <TableCell className="py-2 text-gray-600">{row.date}</TableCell>
+                      <TableCell className="py-2 text-gray-600">{row.amount}</TableCell>
+                      <TableCell className="py-2 text-gray-600">{row.clearDate}</TableCell>
+                      <TableCell className="py-2 text-gray-600">{row.status}</TableCell>
                     </TableRow>
-                  ))
-                ) : (
-                  <TableRow>
-                     <TableCell colSpan={12} className="text-center py-16 text-muted-foreground bg-muted/5">
-                        <div className="flex flex-col items-center justify-center gap-2">
-                            <FileText className="w-10 h-10 text-muted-foreground/50" />
-                            <p>No cheque details found.</p>
-                        </div>
-                     </TableCell>
-                  </TableRow>
-                )}
+                ))}
               </TableBody>
             </Table>
-            )}
-          </div>
-        </CardContent>
-      </Card>
+        </div>
+      </div>
+      
+       {/* Footer / Pagination */}
+       <div className="flex justify-between items-center pt-2">
+            <Button variant="outline" size="icon" className="h-8 w-8 text-green-700 border-green-700 hover:bg-green-50">
+                <FileSpreadsheet className="h-5 w-5" />
+            </Button>
+
+            <div className="flex items-center gap-1">
+                 <Button variant="ghost" size="sm" className="h-8 text-blue-500 font-normal hover:bg-transparent px-1">
+                    12345678910...&gt;&gt;
+                 </Button>
+            </div>
+       </div>
     </div>
   );
 }

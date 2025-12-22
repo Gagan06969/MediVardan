@@ -20,7 +20,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Settings, FileSpreadsheet } from "lucide-react"; 
+import { Search, X, FileSpreadsheet, Settings } from "lucide-react";
 
 export default function OnlinePaymentInvoicePage() {
   const [filters, setFilters] = useState({
@@ -151,7 +151,7 @@ export default function OnlinePaymentInvoicePage() {
     }));
   };
 
-  const clearFilters = () => {
+  const handleClear = () => {
     setFilters({
       clinicName: "",
       invoiceNo: "",
@@ -161,138 +161,139 @@ export default function OnlinePaymentInvoicePage() {
   };
 
   return (
-    <div className="w-full p-6 space-y-6 min-h-screen transition-colors duration-300">
+    <div className="w-full p-4 space-y-6 min-h-screen bg-white dark:bg-gray-950">
       {/* Header */}
-      <div className="flex items-center gap-3 pb-2 border-b border-gray-200 dark:border-gray-800">
-        <Settings className="w-5 h-5 text-red-500 animate-spin-slow" />
-        <h1 className="text-lg font-bold text-red-500 uppercase tracking-wide">
-          CREDIT CARD / DEBIT CARD AND UPI INVOICE REPORT
-        </h1>
-      </div>
+      <h1 className="text-xl font-bold text-red-500 uppercase tracking-wide">
+        CREDIT CARD / DEBIT CARD AND UPI INVOICE REPORT
+      </h1>
 
       {/* Filters Section */}
-      <Card className="border-border shadow-sm bg-card">
-        <CardContent className="p-6 space-y-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 items-end">
-            
-            {/* Clinic Name */}
-            <div className="space-y-2">
-              <Label className="text-xs font-semibold text-gray-700">Clinic Name</Label>
-              <Select
-                value={filters.clinicName}
-                onValueChange={(val) => handleFilterChange("clinicName", val)}
-              >
-                <SelectTrigger className="h-9 border-gray-300 text-xs">
-                  <SelectValue placeholder="-- Select Clinic --" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="dehradun">Dehradun</SelectItem>
-                  <SelectItem value="lb nagar">LB Nagar</SelectItem>
-                  <SelectItem value="madhapur">Madhapur</SelectItem>
-                  <SelectItem value="mambalam">Mambalam</SelectItem>
-                  <SelectItem value="adyar">Adyar</SelectItem>
-                  <SelectItem value="trichy">Trichy</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
+      <div className="grid grid-cols-1 md:grid-cols-12 gap-4 items-end bg-white dark:bg-gray-900 rounded-lg">
+        {/* Clinic Name */}
+        <div className="md:col-span-3 space-y-1">
+          <Label className="text-xs font-semibold text-gray-500">Clinic Name</Label>
+          <Select
+            value={filters.clinicName}
+            onValueChange={(val) => handleFilterChange("clinicName", val)}
+          >
+            <SelectTrigger className="h-9 bg-white border-gray-300">
+              <SelectValue placeholder="-- Select Clinic --" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="dehradun">Dehradun</SelectItem>
+              <SelectItem value="lb nagar">LB Nagar</SelectItem>
+              <SelectItem value="madhapur">Madhapur</SelectItem>
+              <SelectItem value="mambalam">Mambalam</SelectItem>
+              <SelectItem value="adyar">Adyar</SelectItem>
+              <SelectItem value="trichy">Trichy</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
 
-             {/* Invoice No */}
-            <div className="space-y-2">
-              <Label className="text-xs font-semibold text-gray-700">Invoice No</Label>
-              <Input
-                className="h-9 border-gray-300 text-xs"
-                placeholder="Invoice No"
-                value={filters.invoiceNo}
-                onChange={(e) => handleFilterChange("invoiceNo", e.target.value)}
-              />
-            </div>
+        {/* Invoice No */}
+        <div className="md:col-span-3 space-y-1">
+          <Label className="text-xs font-semibold text-gray-500">Invoice No</Label>
+          <Input
+             className="h-9 bg-white border-gray-300"
+             placeholder="Invoice No"
+             value={filters.invoiceNo}
+             onChange={(e) => handleFilterChange("invoiceNo", e.target.value)}
+          />
+        </div>
 
-            {/* From Date */}
-            <div className="space-y-2">
-               {/* Label hidden to match alignment or could be Date Range */}
-               <Input
-                type="date"
-                className="h-9 border-gray-300 text-xs"
-                value={filters.fromDate}
-                onChange={(e) => handleFilterChange("fromDate", e.target.value)}
-              />
-            </div>
+         {/* Empty Spacer */}
+         <div className="hidden md:block md:col-span-6"></div>
 
-            {/* To Date */}
-            <div className="space-y-2">
-               <Input
-                type="date"
-                className="h-9 border-gray-300 text-xs"
-                value={filters.toDate}
-                 onChange={(e) => handleFilterChange("toDate", e.target.value)}
-              />
-            </div>
+         {/* From Date */}
+         <div className="md:col-span-3">
+           <Input
+              type="date"
+              className="h-9 bg-white border-gray-300"
+              value={filters.fromDate}
+              onChange={(e) => handleFilterChange("fromDate", e.target.value)}
+           />
+         </div>
 
-             {/* Buttons */}
-             <div className="flex gap-2">
-                <Button className="h-9 px-4 bg-orange-600 hover:bg-orange-700 text-white text-xs font-semibold">
-                    Search
-                </Button>
-                <Button 
-                    variant="outline" 
-                    className="h-9 px-4 bg-orange-600 hover:bg-orange-700 text-white border-orange-600 text-xs font-semibold"
-                    onClick={clearFilters}
-                >
-                    Clear
-                </Button>
-             </div>
-          </div>
-        </CardContent>
-      </Card>
+          {/* To Date */}
+          <div className="md:col-span-3">
+           <Input
+              type="date"
+              className="h-9 bg-white border-gray-300"
+              value={filters.toDate}
+              onChange={(e) => handleFilterChange("toDate", e.target.value)}
+           />
+         </div>
 
-      {/* Total Count */}
-       <div className="flex justify-end">
-          <p className="text-sm font-semibold text-gray-600">Total : 1012</p>
-       </div>
+        {/* Buttons */}
+        <div className="md:col-span-3 flex gap-2">
+            <Button
+                size="sm"
+                className="bg-[#C04000] hover:bg-[#A03000] text-white px-6 h-9 rounded-md"
+            >
+                Search
+            </Button>
+            <Button
+                size="sm"
+                onClick={handleClear}
+                className="bg-[#C04000] hover:bg-[#A03000] text-white px-6 h-9 rounded-md"
+            >
+                Clear
+            </Button>
+        </div>
+        
+        {/* Total Count */}
+        <div className="md:col-span-3 flex justify-end pb-2">
+             <span className="text-sm text-gray-600 font-medium">Total : 1012</span>
+        </div>
+      </div>
 
       {/* Table Section */}
-      <Card className="border-border shadow-sm bg-card overflow-hidden">
-        <CardContent className="p-0">
-          <div className="overflow-x-auto">
+      <div className="border border-gray-200 rounded-sm overflow-hidden bg-white shadow-sm">
+        <div className="overflow-x-auto">
             <Table>
-              <TableHeader className="bg-lime-50">
-                <TableRow>
-                  <TableHead className="text-xs font-bold text-gray-700 whitespace-nowrap">Sr. No.</TableHead>
-                  <TableHead className="text-xs font-bold text-gray-700 whitespace-nowrap">Clinic Name</TableHead>
-                  <TableHead className="text-xs font-bold text-gray-700 whitespace-nowrap">Patient Code</TableHead>
-                  <TableHead className="text-xs font-bold text-gray-700 whitespace-nowrap">Patient Name</TableHead>
-                  <TableHead className="text-xs font-bold text-gray-700 whitespace-nowrap">Invoice No.</TableHead>
-                  <TableHead className="text-xs font-bold text-gray-700 whitespace-nowrap">Payment Date</TableHead>
-                  <TableHead className="text-xs font-bold text-gray-700 whitespace-nowrap">Revenue Amount</TableHead>
-                  <TableHead className="text-xs font-bold text-gray-700 whitespace-nowrap">Payment Mode</TableHead>
-                  <TableHead className="text-xs font-bold text-gray-700 whitespace-nowrap">Transaction No.</TableHead>
+              <TableHeader className="bg-[#E6FFCC] hover:bg-[#E6FFCC]">
+                <TableRow className="border-b border-gray-100 hover:bg-[#E6FFCC]">
+                  <TableHead className="text-xs font-bold text-gray-700 h-10">Sr. No.</TableHead>
+                  <TableHead className="text-xs font-bold text-gray-700 h-10">Clinic Name</TableHead>
+                  <TableHead className="text-xs font-bold text-gray-700 h-10">Patient Code</TableHead>
+                  <TableHead className="text-xs font-bold text-gray-700 h-10">Patient Name</TableHead>
+                  <TableHead className="text-xs font-bold text-gray-700 h-10">Invoice No.</TableHead>
+                  <TableHead className="text-xs font-bold text-gray-700 h-10">Payment Date</TableHead>
+                  <TableHead className="text-xs font-bold text-gray-700 h-10">Revenue Amount</TableHead>
+                  <TableHead className="text-xs font-bold text-gray-700 h-10">Payment Mode</TableHead>
+                  <TableHead className="text-xs font-bold text-gray-700 h-10">Transaction No.</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {mockData.map((row) => (
-                  <TableRow key={row.id}>
-                    <TableCell className="text-xs font-medium text-gray-900 border-r border-gray-100">{row.id}</TableCell>
-                    <TableCell className="text-xs text-gray-600 border-r border-gray-100 uppercase">{row.clinicName}</TableCell>
-                    <TableCell className="text-xs text-gray-600 border-r border-gray-100">{row.patientCode}</TableCell>
-                    <TableCell className="text-xs text-gray-600 border-r border-gray-100 uppercase">{row.patientName}</TableCell>
-                    <TableCell className="text-xs text-gray-600 border-r border-gray-100">{row.invoiceNo}</TableCell>
-                    <TableCell className="text-xs text-gray-600 border-r border-gray-100">{row.paymentDate}</TableCell>
-                    <TableCell className="text-xs text-gray-600 border-r border-gray-100">{row.revenueAmount}</TableCell>
-                    <TableCell className="text-xs text-gray-600 border-r border-gray-100">{row.paymentMode}</TableCell>
-                    <TableCell className="text-xs text-gray-600">{row.transactionNo}</TableCell>
-                  </TableRow>
+                    <TableRow key={row.id} className="border-b border-gray-50 hover:bg-gray-50 text-xs">
+                      <TableCell className="py-2 text-gray-600">{row.id}</TableCell>
+                      <TableCell className="py-2 text-gray-600 uppercase">{row.clinicName}</TableCell>
+                      <TableCell className="py-2 text-gray-600">{row.patientCode}</TableCell>
+                      <TableCell className="py-2 text-gray-600 uppercase">{row.patientName}</TableCell>
+                      <TableCell className="py-2 text-gray-600">{row.invoiceNo}</TableCell>
+                      <TableCell className="py-2 text-gray-600">{row.paymentDate}</TableCell>
+                      <TableCell className="py-2 text-gray-600">{row.revenueAmount}</TableCell>
+                      <TableCell className="py-2 text-gray-600">{row.paymentMode}</TableCell>
+                      <TableCell className="py-2 text-gray-600">{row.transactionNo}</TableCell>
+                    </TableRow>
                 ))}
               </TableBody>
             </Table>
-          </div>
-        </CardContent>
-      </Card>
+        </div>
+      </div>
       
-       {/* Export Button & Footer */}
-       <div className="flex justify-start pt-2">
-            <Button size="icon" className="bg-green-700 hover:bg-green-800 h-8 w-8 rounded">
-                <FileSpreadsheet className="h-5 w-5 text-white" />
+       {/* Footer / Pagination */}
+       <div className="flex justify-between items-center pt-2">
+            <Button variant="outline" size="icon" className="h-8 w-8 text-green-700 border-green-700 hover:bg-green-50">
+                <FileSpreadsheet className="h-5 w-5" />
             </Button>
+
+            <div className="flex items-center gap-1">
+                 <Button variant="ghost" size="sm" className="h-8 text-blue-500 font-normal hover:bg-transparent px-1">
+                    12345678910...&gt;&gt;
+                 </Button>
+            </div>
        </div>
     </div>
   );
