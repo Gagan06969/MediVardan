@@ -1,0 +1,264 @@
+"use client";
+import React, { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { Search, Settings, FileSpreadsheet } from "lucide-react";
+import { exportToExcel } from "@/utils/exportToExcel";
+import CustomPagination from "@/components/ui/custom-pagination";
+
+export default function PurchaseOrderReceivedPage() {
+  const [vendorName, setVendorName] = useState("");
+  const [orderNo, setOrderNo] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
+
+  // Mock data matching the screenshot
+  const [orders, setOrders] = useState([
+    {
+      id: 1,
+      orderNo: "ORD4968",
+      vendorName: "PROMIS DENTAL SYSTEM",
+      status: "Received",
+      orderDate: "01-Jan-2025",
+    },
+    {
+      id: 2,
+      orderNo: "ORD5814",
+      vendorName: "Nidhi Dental Solution",
+      status: "Received",
+      orderDate: "11-Oct-2024",
+    },
+    {
+      id: 3,
+      orderNo: "ORD3123",
+      vendorName: "A-Z Dental World",
+      status: "Received",
+      orderDate: "02-Oct-2024",
+    },
+    {
+      id: 4,
+      orderNo: "ORD7594",
+      vendorName: "PROMIS DENTAL SYSTEM",
+      status: "Received",
+      orderDate: "03-Aug-2024",
+    },
+    {
+      id: 5,
+      orderNo: "ORD3068",
+      vendorName: "PROMIS DENTAL SYSTEM",
+      status: "Received",
+      orderDate: "23-Aug-2024",
+    },
+    {
+      id: 6,
+      orderNo: "ORD9755",
+      vendorName: "PROMIS DENTAL SYSTEM",
+      status: "Received",
+      orderDate: "17-Aug-2024",
+    },
+    {
+      id: 7,
+      orderNo: "ORD3393",
+      vendorName: "A-Z Dental World",
+      status: "Received",
+      orderDate: "31-Jul-2024",
+    },
+    {
+      id: 8,
+      orderNo: "ORD7751",
+      vendorName: "PROMIS DENTAL SYSTEM",
+      status: "Received",
+      orderDate: "25-Jul-2024",
+    },
+    {
+      id: 9,
+      orderNo: "ORD6749",
+      vendorName: "OHI MARKETING",
+      status: "Received",
+      orderDate: "26-Jul-2024",
+    },
+    {
+      id: 10,
+      orderNo: "ORD9253",
+      vendorName: "A-Z Dental World",
+      status: "Received",
+      orderDate: "24-Jul-2024",
+    },
+    {
+      id: 11,
+      orderNo: "ORD4163",
+      vendorName: "SHREEYASH MEDICOS",
+      status: "Received",
+      orderDate: "23-Jul-2024",
+    },
+    {
+      id: 12,
+      orderNo: "ORD8666",
+      vendorName: "SHREEYASH MEDICOS",
+      status: "Received",
+      orderDate: "23-Jul-2024",
+    },
+  ]);
+
+  const handleSearch = () => {
+    console.log("Searching with:", { vendorName, orderNo });
+  };
+
+  const handleReceive = (id) => {
+    console.log("Receiving order ID:", id);
+    // Logic to mark order as received or open receive modal would go here
+  };
+
+  const handleExport = () => {
+    exportToExcel(orders, "Purchase_Order_Received_Report");
+  };
+
+  // Pagination Logic
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentItems = orders.slice(indexOfFirstItem, indexOfLastItem);
+
+  return (
+    <div className="w-full min-h-screen bg-white dark:bg-gray-900 p-6 space-y-6">
+      {/* Header */}
+      <div className="flex items-center gap-3">
+        <div className="w-8 h-8 rounded-full bg-red-100 dark:bg-red-900/20 flex items-center justify-center">
+            <Settings className="w-4 h-4 text-red-600" />
+        </div>
+        <h1 className="text-xl font-bold text-red-600 dark:text-red-500 uppercase">
+          VIEW PURCHASE ORDER
+        </h1>
+      </div>
+
+      {/* Filters */}
+      <div className="flex flex-col md:flex-row gap-4 items-end bg-white dark:bg-gray-800 p-4 rounded-lg border border-gray-200 dark:border-gray-700">
+        {/* Vendor Name */}
+        <div className="w-full md:w-1/3 space-y-1">
+          <label className="text-xs font-semibold text-gray-500 uppercase">
+            Vendor Name
+          </label>
+          <Input
+            placeholder="Vendor Name"
+            value={vendorName}
+            onChange={(e) => setVendorName(e.target.value)}
+            className="h-10 bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-500 dark:text-gray-400"
+          />
+        </div>
+
+        {/* Order No */}
+        <div className="w-full md:w-1/3 space-y-1">
+          <label className="text-xs font-semibold text-gray-500 uppercase">
+            Order No
+          </label>
+          <Input
+            placeholder="Order No"
+            value={orderNo}
+            onChange={(e) => setOrderNo(e.target.value)}
+            className="h-10 bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-500 dark:text-gray-400"
+          />
+        </div>
+
+        {/* Search Button */}
+        <div className="w-full md:w-auto">
+          <Button
+            onClick={handleSearch}
+            className="bg-[#D35400] hover:bg-[#ba4a00] text-white px-8 h-10 w-full md:w-auto shadow-sm transition-all"
+          >
+            Search
+          </Button>
+        </div>
+      </div>
+
+       {/* Total Count */}
+       <div className="flex justify-end pr-2">
+         <span className="font-semibold text-gray-600 dark:text-gray-400 text-sm">Total : {orders.length}</span>
+      </div>
+
+      {/* Table */}
+      <div className="border border-gray-200 dark:border-gray-700 rounded-t-lg overflow-hidden overflow-x-auto">
+        <Table>
+          <TableHeader className="bg-[#e6ffcc] dark:bg-[#e6ffcc]/20">
+            <TableRow className="hover:bg-transparent border-gray-200 dark:border-gray-700">
+              <TableHead className="w-[60px] font-bold text-gray-800 dark:text-gray-200 border-r border-white dark:border-gray-600">
+                Sr. No.
+              </TableHead>
+              <TableHead className="font-bold text-gray-800 dark:text-gray-200 border-r border-white dark:border-gray-600">
+                Order No
+              </TableHead>
+              <TableHead className="font-bold text-gray-800 dark:text-gray-200 border-r border-white dark:border-gray-600">
+                Vendor Name
+              </TableHead>
+              <TableHead className="font-bold text-gray-800 dark:text-gray-200 border-r border-white dark:border-gray-600">
+                Order Status
+              </TableHead>
+              <TableHead className="font-bold text-gray-800 dark:text-gray-200 border-r border-white dark:border-gray-600">
+                 Order Date
+              </TableHead>
+              <TableHead className="w-[120px] font-bold text-gray-800 dark:text-gray-200 text-center">
+                 
+              </TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {currentItems.map((order, index) => (
+              <TableRow
+                key={order.id}
+                className="hover:bg-gray-50 dark:hover:bg-gray-800/50 border-b border-gray-200 dark:border-gray-700"
+              >
+                <TableCell className="font-medium text-gray-600 dark:text-gray-300 border-r border-gray-200 dark:border-gray-700 py-3">
+                  {indexOfFirstItem + index + 1}
+                </TableCell>
+                <TableCell className="text-gray-600 dark:text-gray-300 border-r border-gray-200 dark:border-gray-700 py-3">
+                   {order.orderNo}
+                </TableCell>
+                <TableCell className="text-gray-600 dark:text-gray-300 border-r border-gray-200 dark:border-gray-700 py-3 uppercase text-sm">
+                  {order.vendorName}
+                </TableCell>
+                <TableCell className="text-gray-600 dark:text-gray-300 border-r border-gray-200 dark:border-gray-700 py-3">
+                  {order.status}
+                </TableCell>
+                <TableCell className="text-gray-600 dark:text-gray-300 border-r border-gray-200 dark:border-gray-700 py-3">
+                  {order.orderDate}
+                </TableCell>
+                 <TableCell className="py-2 text-center">
+                  <Button 
+                    onClick={() => handleReceive(order.id)}
+                    className="bg-[#E09F7D] hover:bg-[#d08e6b] text-white h-8 px-4 text-xs rounded shadow-sm"
+                  >
+                    Receive
+                  </Button>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </div>
+
+       {/* Footer / Pagination / Export */}
+       <div className="flex justify-between items-center mt-4">
+         {/* Excel Export Icon */}
+         <div className="cursor-pointer" onClick={handleExport} title="Download Excel">
+           <div className="w-8 h-8 flex items-center justify-center bg-green-700 hover:bg-green-800 text-white rounded shadow transition-colors">
+            <FileSpreadsheet className="w-5 h-5" />
+           </div>
+        </div>
+
+        {/* Pagination component */}
+        <CustomPagination 
+            totalItems={orders.length} 
+            itemsPerPage={itemsPerPage} 
+            currentPage={currentPage} 
+            onPageChange={setCurrentPage} 
+        />
+        </div>
+    </div>
+  );
+}

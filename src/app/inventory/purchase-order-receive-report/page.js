@@ -1,0 +1,268 @@
+"use client";
+import React, { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { FileSpreadsheet, Settings } from "lucide-react";
+import { exportToExcel } from "@/utils/exportToExcel";
+import CustomPagination from "@/components/ui/custom-pagination";
+
+export default function PurchaseOrderReceiveReportPage() {
+  const [orderNo, setOrderNo] = useState("");
+  const [fromDate, setFromDate] = useState("");
+  const [toDate, setToDate] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
+
+  // Mock data matching the screenshot
+  const [reportData, setReportData] = useState([
+    {
+      id: 1,
+      orderNo: "ORD4968",
+      receivedDate: "04-Feb-2025",
+      materialName: "Saline",
+      requestQty: 1,
+      receivedQty: 1,
+      price: "3262.72",
+    },
+    {
+      id: 2,
+      orderNo: "ORD5814",
+      receivedDate: "02-Jan-2025",
+      materialName: "Composite",
+      requestQty: 40,
+      receivedQty: 40,
+      price: "350.00",
+    },
+    {
+      id: 3,
+      orderNo: "ORD5814",
+      receivedDate: "02-Jan-2025",
+      materialName: "Bonding Agent",
+      requestQty: 10,
+      receivedQty: 10,
+      price: "350.00",
+    },
+    {
+      id: 4,
+      orderNo: "ORD5814",
+      receivedDate: "02-Jan-2025",
+      materialName: "Epoxyseal",
+      requestQty: 20,
+      receivedQty: 20,
+      price: "1250.00",
+    },
+    {
+      id: 5,
+      orderNo: "ORD3123",
+      receivedDate: "05-Nov-2024",
+      materialName: "Indurent Gel",
+      requestQty: 20,
+      receivedQty: 20,
+      price: "400.00",
+    },
+    {
+      id: 6,
+      orderNo: "ORD3123",
+      receivedDate: "05-Nov-2024",
+      materialName: "Oranwash",
+      requestQty: 10,
+      receivedQty: 10,
+      price: "735.00",
+    },
+    {
+      id: 7,
+      orderNo: "ORD7594",
+      receivedDate: "23-Aug-2024",
+      materialName: "Blue Bite",
+      requestQty: 5,
+      receivedQty: 5,
+      price: "616.17",
+    },
+    {
+      id: 8,
+      orderNo: "ORD7594",
+      receivedDate: "23-Aug-2024",
+      materialName: "Composite N75 B2",
+      requestQty: 5,
+      receivedQty: 5,
+      price: "584.82",
+    },
+    {
+      id: 9,
+      orderNo: "ORD7594",
+      receivedDate: "23-Aug-2024",
+      materialName: "Composite N75 A3",
+      requestQty: 5,
+      receivedQty: 5,
+      price: "584.82",
+    },
+    {
+      id: 10,
+      orderNo: "ORD7594",
+      receivedDate: "23-Aug-2024",
+      materialName: "Composite N75 A2",
+      requestQty: 12,
+      receivedQty: 12,
+      price: "584.82",
+    },
+  ]);
+
+  const handleSearch = () => {
+    console.log("Searching with:", { orderNo, fromDate, toDate });
+  };
+
+  const handleExport = () => {
+    exportToExcel(reportData, "Purchase_Order_Receive_Report");
+  };
+
+  // Pagination Logic
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentItems = reportData.slice(indexOfFirstItem, indexOfLastItem);
+
+  return (
+    <div className="w-full min-h-screen bg-white dark:bg-gray-900 p-6 space-y-6">
+      {/* Header */}
+      <div className="flex items-center gap-3">
+        <div className="w-8 h-8 rounded-full bg-red-100 dark:bg-red-900/20 flex items-center justify-center">
+          <Settings className="w-4 h-4 text-red-600" />
+        </div>
+        <h1 className="text-xl font-bold text-red-600 dark:text-red-500 uppercase">
+          PURCHASE ORDER RECEIVE REPORT
+        </h1>
+      </div>
+
+      {/* Filters */}
+      <div className="flex flex-col md:flex-row gap-4 items-end bg-white dark:bg-gray-800 p-4 rounded-lg border border-gray-200 dark:border-gray-700">
+        {/* Order No */}
+        <div className="w-full md:w-1/4 space-y-1">
+          <Input
+            placeholder="Order No"
+            value={orderNo}
+            onChange={(e) => setOrderNo(e.target.value)}
+            className="h-10 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-100 bg-white dark:bg-gray-700 placeholder:text-gray-400"
+          />
+        </div>
+
+        {/* From Date */}
+        <div className="w-full md:w-1/4 space-y-1">
+          <Input
+            type="date"
+            placeholder="From Date"
+            value={fromDate}
+            onChange={(e) => setFromDate(e.target.value)}
+            className="h-10 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-100 bg-white dark:bg-gray-700"
+          />
+        </div>
+
+        {/* To Date */}
+        <div className="w-full md:w-1/4 space-y-1">
+          <Input
+            type="date"
+            placeholder="To Date"
+            value={toDate}
+            onChange={(e) => setToDate(e.target.value)}
+            className="h-10 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-100 bg-white dark:bg-gray-700"
+          />
+        </div>
+
+        {/* Search Button */}
+        <div className="w-full md:w-auto">
+          <Button
+            onClick={handleSearch}
+            className="bg-[#D35400] hover:bg-[#ba4a00] text-white px-8 h-10 w-full md:w-auto transition-colors"
+          >
+            Search
+          </Button>
+        </div>
+      </div>
+
+      {/* Table */}
+      <div className="border border-gray-200 dark:border-gray-700 rounded-t-lg overflow-hidden">
+        <Table>
+          <TableHeader className="bg-[#e6ffcc] dark:bg-[#e6ffcc]/20">
+            <TableRow className="hover:bg-transparent">
+              <TableHead className="w-[60px] font-bold text-gray-800 dark:text-gray-200 border-r border-white dark:border-gray-600">
+                Sr. No.
+              </TableHead>
+              <TableHead className="font-bold text-gray-800 dark:text-gray-200 border-r border-white dark:border-gray-600">
+                Order No
+              </TableHead>
+              <TableHead className="font-bold text-gray-800 dark:text-gray-200 border-r border-white dark:border-gray-600">
+                Received Date
+              </TableHead>
+              <TableHead className="font-bold text-gray-800 dark:text-gray-200 border-r border-white dark:border-gray-600">
+                Material Name
+              </TableHead>
+              <TableHead className="font-bold text-gray-800 dark:text-gray-200 border-r border-white dark:border-gray-600">
+                Request Qty
+              </TableHead>
+              <TableHead className="font-bold text-gray-800 dark:text-gray-200 border-r border-white dark:border-gray-600">
+                Received Qty
+              </TableHead>
+              <TableHead className="font-bold text-gray-800 dark:text-gray-200">
+                Price
+              </TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {currentItems.map((row, index) => (
+              <TableRow
+                key={row.id}
+                className="hover:bg-gray-50 dark:hover:bg-gray-800/50 border-b border-gray-200 dark:border-gray-700"
+              >
+                <TableCell className="font-medium text-gray-600 dark:text-gray-300 border-r border-gray-200 dark:border-gray-700 py-3">
+                  {indexOfFirstItem + index + 1}
+                </TableCell>
+                <TableCell className="text-gray-600 dark:text-gray-300 border-r border-gray-200 dark:border-gray-700 py-3">
+                  {row.orderNo}
+                </TableCell>
+                <TableCell className="text-gray-600 dark:text-gray-300 border-r border-gray-200 dark:border-gray-700 py-3">
+                  {row.receivedDate}
+                </TableCell>
+                <TableCell className="text-gray-600 dark:text-gray-300 border-r border-gray-200 dark:border-gray-700 py-3">
+                  {row.materialName}
+                </TableCell>
+                <TableCell className="text-gray-600 dark:text-gray-300 border-r border-gray-200 dark:border-gray-700 py-3">
+                  {row.requestQty}
+                </TableCell>
+                <TableCell className="text-gray-600 dark:text-gray-300 border-r border-gray-200 dark:border-gray-700 py-3">
+                  {row.receivedQty}
+                </TableCell>
+                <TableCell className="text-gray-600 dark:text-gray-300 py-3">
+                  {row.price}
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </div>
+
+       {/* Footer / Pagination / Export */}
+      <div className="flex justify-between items-center mt-4">
+        {/* Excel Export */}
+        <div className="cursor-pointer" onClick={handleExport} title="Download Excel">
+           <div className="w-8 h-8 flex items-center justify-center bg-green-700 hover:bg-green-800 text-white rounded shadow transition-colors">
+            <FileSpreadsheet className="w-5 h-5" />
+           </div>
+        </div>
+        
+        {/* Pagination component */}
+        <CustomPagination 
+            totalItems={reportData.length} 
+            itemsPerPage={itemsPerPage} 
+            currentPage={currentPage} 
+            onPageChange={setCurrentPage} 
+        />
+      </div>
+    </div>
+  );
+}

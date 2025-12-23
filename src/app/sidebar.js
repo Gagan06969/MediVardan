@@ -55,6 +55,7 @@ const getMenuIcon = (menuName) => {
     'Billing': Receipt,
     'Pharmacy': Activity,
     'Inventory': Package,
+    'Accounts': CreditCard,
   };
 
   const IconComponent = iconMap[menuName] || Activity;
@@ -213,7 +214,7 @@ export default function Sidebar({ open }) {
 
   // Add Report menu
   const reportMenu = {
-    menuID: 'report-menu',
+    menuID: 'report-menu-local',
     menuName: 'Report',
     menuPath: null,
     menuChild: [
@@ -271,6 +272,91 @@ export default function Sidebar({ open }) {
         menuID: 'cheque-report',
         menuName: 'Cheque Report',
         menuPath: '/report/cheque-report'
+      },
+      {
+        menuID: 'patientwise-collection-report',
+        menuName: 'Patientwise Collection Report',
+        menuPath: '/report/patientwise-collection-report'
+      },
+      {
+        menuID: 'payment-mode-report',
+        menuName: 'Payment Mode Report',
+        menuPath: '/report/payment-mode-report'
+      },
+      {
+        menuID: 'payment-mode-clinic-report',
+        menuName: 'Payment Mode Clinic Report',
+        menuPath: '/report/payment-mode-clinic-report'
+      }
+    ]
+  };
+
+  // Add Accounts menu
+  const accountsMenu = {
+    menuID: 'accounts-menu-local',
+    menuName: 'Accounts',
+    menuPath: null,
+    menuChild: [
+      {
+        menuID: 'patients-medicines-collection-report',
+        menuName: 'Patients Medicines Collection Report',
+        menuPath: '/accounts/patients-medicines-collection-report'
+      },
+      {
+        menuID: 'accountant-expense',
+        menuName: 'Accountant Expense',
+        menuPath: '/accounts/accountant-expense'
+      },
+      {
+        menuID: 'area-manager-report',
+        menuName: 'Area Manager Report',
+        menuPath: '/accounts/area-manager-report'
+      },
+      {
+        menuID: 'area-manager-collection-report',
+        menuName: 'Area Manager Collection Report',
+        menuPath: '/accounts/area-manager-collection-report'
+      },
+      {
+        menuID: 'clinic-medicines-collection-report',
+        menuName: 'Clinic Medicines Collection Report',
+        menuPath: '/accounts/clinic-medicines-collection-report'
+      },
+      {
+        menuID: 'expense-entry',
+        menuName: 'Expense Entry',
+        menuPath: '/accounts/expense-entry'
+      },
+      {
+        menuID: 'expense-report',
+        menuName: 'Expense Report',
+        menuPath: '/accounts/expense-report'
+      },
+      {
+        menuID: 'clinic-expense-report',
+        menuName: 'Clinic Expense Report',
+        menuPath: '/accounts/clinic-expense-report'
+      },
+      {
+        menuID: 'clinic-collection-report',
+        menuName: 'Clinic Collection Report',
+        menuPath: '/accounts/clinic-collection-report'
+      },
+
+      {
+        menuID: 'accounts-patientwise-collection-report',
+        menuName: 'Patientwise Collection Report',
+        menuPath: '/report/patientwise-collection-report'
+      },
+      {
+        menuID: 'accounts-payment-mode-report',
+        menuName: 'Payment Mode Report',
+        menuPath: '/report/payment-mode-report'
+      },
+      {
+        menuID: 'accounts-payment-mode-clinic-report',
+        menuName: 'Payment Mode Clinic Report',
+        menuPath: '/report/payment-mode-clinic-report'
       }
     ]
   };
@@ -285,6 +371,51 @@ export default function Sidebar({ open }) {
         menuID: 'clinic-stock',
         menuName: 'Clinic Stock',
         menuPath: '/inventory/clinic-stock'
+      },
+      {
+        menuID: 'head-office-stock',
+        menuName: 'Head Office Stock',
+        menuPath: '/inventory/head-office-stock'
+      },
+      {
+        menuID: 'request-inventory',
+        menuName: 'Request Inventory',
+        menuPath: '/inventory/request-inventory'
+      },
+      {
+        menuID: 'view-request-inventory',
+        menuName: 'View Request Inventory',
+        menuPath: '/inventory/view-request-inventory'
+      },
+      {
+        menuID: 'view-order-history',
+        menuName: 'View Order History',
+        menuPath: '/inventory/view-order-history'
+      },
+      {
+        menuID: 'clinic-stock-report',
+        menuName: 'Clinic Stock Report',
+        menuPath: '/inventory/clinic-stock-report'
+      },
+      {
+        menuID: 'purchase-order',
+        menuName: 'Purchase Order',
+        menuPath: '/inventory/purchase-order'
+      },
+      {
+        menuID: 'purchase-order-received',
+        menuName: 'Purchase Order Received',
+        menuPath: '/inventory/purchase-order-received'
+      },
+      {
+        menuID: 'purchase-order-receive-report',
+        menuName: 'Purchase Order Receive Report',
+        menuPath: '/inventory/purchase-order-receive-report'
+      },
+      {
+        menuID: 'clinic-request-stock-send-report',
+        menuName: 'Clinic Request Stock Send Report',
+        menuPath: '/inventory/clinic-request-stock-send-report'
       }
     ]
   };
@@ -306,7 +437,7 @@ export default function Sidebar({ open }) {
 
   // Append Appointment, Invoice, Lead, Patient Details, Doctor, Accounts, and Report menus to the data
   // Append Appointment, Invoice, Lead, Patient Details, Doctor, Accounts, and Report menus to the data
-  const menuData = data ? [...data, doctorMenu, appointmentMenu, leadMenu, invoiceMenu, patientDetailsMenu, reportMenu, inventoryMenu] : [doctorMenu, appointmentMenu, leadMenu, invoiceMenu, patientDetailsMenu, reportMenu, inventoryMenu];
+  const menuData = data ? [...data, doctorMenu, appointmentMenu, leadMenu, invoiceMenu, patientDetailsMenu, reportMenu, inventoryMenu, accountsMenu] : [doctorMenu, appointmentMenu, leadMenu, invoiceMenu, patientDetailsMenu, reportMenu, inventoryMenu, accountsMenu];
 
   if (isLoading) return <div>Loading...</div>;
 

@@ -1,0 +1,281 @@
+"use client";
+import React, { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { FileSpreadsheet, Settings } from "lucide-react";
+import { exportToExcel } from "@/utils/exportToExcel";
+import CustomPagination from "@/components/ui/custom-pagination";
+
+export default function PatientsMedicinesCollectionReportPage() {
+  const [clinicName, setClinicName] = useState("");
+  const [patientName, setPatientName] = useState("");
+  const [fromDate, setFromDate] = useState("");
+  const [toDate, setToDate] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
+
+  // Mock data matching the screenshot
+  const [reportData, setReportData] = useState([
+    {
+      id: 1,
+      clinic: "Salunkhe vihar",
+      patientCode: "P112275",
+      patientName: "Krishna Suthar",
+      date: "23-12-2025",
+      paidTotal: "100.00",
+    },
+    {
+      id: 2,
+      clinic: "Toli Chowki",
+      patientCode: "P109430",
+      patientName: "sophia mehreen",
+      date: "23-12-2025",
+      paidTotal: "250.00",
+    },
+    {
+      id: 3,
+      clinic: "Dombivali East",
+      patientCode: "P107053",
+      patientName: "kailas sanas",
+      date: "23-12-2025",
+      paidTotal: "500.00",
+    },
+    {
+      id: 4,
+      clinic: "Salunkhe vihar",
+      patientCode: "P113938",
+      patientName: "mustaq shaikh",
+      date: "23-12-2025",
+      paidTotal: "100.00",
+    },
+    {
+      id: 5,
+      clinic: "Hoodi",
+      patientCode: "P108630",
+      patientName: "Sneha Priya",
+      date: "23-12-2025",
+      paidTotal: "200.00",
+    },
+    {
+      id: 6,
+      clinic: "Palava",
+      patientCode: "P113959",
+      patientName: "sanjay raut",
+      date: "23-12-2025",
+      paidTotal: "400.00",
+    },
+    {
+      id: 7,
+      clinic: "GURGAON",
+      patientCode: "P112774",
+      patientName: "sunakshi mendiratta",
+      date: "22-12-2025",
+      paidTotal: "1800.00",
+    },
+    {
+      id: 8,
+      clinic: "NASHIK ROAD",
+      patientCode: "P113127",
+      patientName: "nitin thakur",
+      date: "22-12-2025",
+      paidTotal: "1500.00",
+    },
+    {
+      id: 9,
+      clinic: "Hubballi",
+      patientCode: "P113825",
+      patientName: "LAKKAPPA NANDAGAR",
+      date: "22-12-2025",
+      paidTotal: "250.00",
+    },
+    {
+      id: 10,
+      clinic: "Hubballi",
+      patientCode: "P113825",
+      patientName: "LAKKAPPA NANDAGAR",
+      date: "22-12-2025",
+      paidTotal: "0.00",
+    },
+  ]);
+
+  const handleSearch = () => {
+    console.log("Searching with:", { clinicName, patientName, fromDate, toDate });
+  };
+
+  const handleExport = () => {
+    exportToExcel(reportData, "Patients_Medicines_Collection_Report");
+  };
+
+  // Pagination Logic
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentItems = reportData.slice(indexOfFirstItem, indexOfLastItem);
+
+  return (
+    <div className="w-full min-h-screen bg-white dark:bg-gray-900 p-6 space-y-6">
+      {/* Header */}
+      <div className="flex items-center gap-3">
+        <div className="w-8 h-8 rounded-full bg-red-100 dark:bg-red-900/20 flex items-center justify-center">
+          <Settings className="w-4 h-4 text-red-600" />
+        </div>
+        <h1 className="text-xl font-bold text-red-600 dark:text-red-500 uppercase">
+          PATIENTS MEDICINES COLLECTION REPORT
+        </h1>
+      </div>
+
+      {/* Filters */}
+      <div className="flex flex-col md:flex-row gap-4 items-end bg-white dark:bg-gray-800 p-4 rounded-lg border border-gray-200 dark:border-gray-700">
+        {/* Clinic Dropdown */}
+        <div className="w-full md:w-1/5 space-y-1">
+          <Select value={clinicName} onValueChange={setClinicName}>
+            <SelectTrigger className="h-10 border-gray-300 dark:border-gray-600 text-gray-500 dark:text-gray-400 bg-white dark:bg-gray-700">
+              <SelectValue placeholder="-- Select Clinic --" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="salunkhe-vihar">Salunkhe vihar</SelectItem>
+              <SelectItem value="toli-chowki">Toli Chowki</SelectItem>
+              <SelectItem value="dombivali-east">Dombivali East</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+
+        {/* Patient Name */}
+        <div className="w-full md:w-1/5 space-y-1">
+          <Input
+            type="text"
+            placeholder="Patient Name"
+            value={patientName}
+            onChange={(e) => setPatientName(e.target.value)}
+            className="h-10 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-100 bg-white dark:bg-gray-700"
+          />
+        </div>
+
+        {/* From Date */}
+        <div className="w-full md:w-1/5 space-y-1">
+          <Input
+            type="date"
+            placeholder="From Date"
+            value={fromDate}
+            onChange={(e) => setFromDate(e.target.value)}
+            className="h-10 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-100 bg-white dark:bg-gray-700"
+          />
+        </div>
+
+        {/* To Date */}
+        <div className="w-full md:w-1/5 space-y-1">
+          <Input
+            type="date"
+            placeholder="To Date"
+            value={toDate}
+            onChange={(e) => setToDate(e.target.value)}
+            className="h-10 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-100 bg-white dark:bg-gray-700"
+          />
+        </div>
+
+        {/* Search Button */}
+        <div className="w-full md:w-auto">
+          <Button
+            onClick={handleSearch}
+            className="bg-[#D35400] hover:bg-[#ba4a00] text-white px-8 h-10 w-full md:w-auto transition-colors"
+          >
+            Search
+          </Button>
+        </div>
+      </div>
+
+       {/* Stats */}
+       <div className="flex gap-20 px-4">
+        <span className="font-semibold text-gray-700 dark:text-gray-300">Total Count : {reportData.length}</span>
+        <span className="font-semibold text-gray-700 dark:text-gray-300">Revenue Total: 290819.50</span>
+       </div>
+
+      {/* Table */}
+      <div className="border border-gray-200 dark:border-gray-700 rounded-t-lg overflow-hidden">
+        <Table>
+          <TableHeader className="bg-[#e6ffcc] dark:bg-[#e6ffcc]/20">
+            <TableRow className="hover:bg-transparent">
+              <TableHead className="w-[60px] font-bold text-gray-800 dark:text-gray-200 border-r border-white dark:border-gray-600">
+                Sr No.
+              </TableHead>
+              <TableHead className="font-bold text-gray-800 dark:text-gray-200 border-r border-white dark:border-gray-600">
+                Clinic Name
+              </TableHead>
+              <TableHead className="font-bold text-gray-800 dark:text-gray-200 border-r border-white dark:border-gray-600">
+                Patient Code
+              </TableHead>
+               <TableHead className="font-bold text-gray-800 dark:text-gray-200 border-r border-white dark:border-gray-600">
+                Patient Name
+              </TableHead>
+              <TableHead className="font-bold text-gray-800 dark:text-gray-200 border-r border-white dark:border-gray-600">
+                Date
+              </TableHead>
+              <TableHead className="font-bold text-gray-800 dark:text-gray-200">
+                Paid Total
+              </TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {currentItems.map((row, index) => (
+              <TableRow
+                key={row.id}
+                className="hover:bg-gray-50 dark:hover:bg-gray-800/50 border-b border-gray-200 dark:border-gray-700"
+              >
+                <TableCell className="font-medium text-gray-600 dark:text-gray-300 border-r border-gray-200 dark:border-gray-700 py-3">
+                  {indexOfFirstItem + index + 1}
+                </TableCell>
+                <TableCell className="text-gray-600 dark:text-gray-300 border-r border-gray-200 dark:border-gray-700 py-3">
+                  {row.clinic}
+                </TableCell>
+                <TableCell className="text-gray-600 dark:text-gray-300 border-r border-gray-200 dark:border-gray-700 py-3">
+                  {row.patientCode}
+                </TableCell>
+                 <TableCell className="text-gray-600 dark:text-gray-300 border-r border-gray-200 dark:border-gray-700 py-3">
+                  {row.patientName}
+                </TableCell>
+                 <TableCell className="text-gray-600 dark:text-gray-300 border-r border-gray-200 dark:border-gray-700 py-3">
+                  {row.date}
+                </TableCell>
+                <TableCell className="text-gray-600 dark:text-gray-300 py-3 font-medium">
+                  {row.paidTotal}
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </div>
+
+      {/* Footer / Pagination / Export */}
+      <div className="flex justify-between items-center mt-4">
+        {/* Excel Export */}
+        <div className="cursor-pointer" onClick={handleExport} title="Download Excel">
+           <div className="w-8 h-8 flex items-center justify-center bg-green-700 hover:bg-green-800 text-white rounded shadow transition-colors">
+            <FileSpreadsheet className="w-5 h-5" />
+           </div>
+        </div>
+        
+        {/* Pagination component */}
+        <CustomPagination 
+            totalItems={reportData.length} 
+            itemsPerPage={itemsPerPage} 
+            currentPage={currentPage} 
+            onPageChange={setCurrentPage} 
+        />
+      </div>
+    </div>
+  );
+}
