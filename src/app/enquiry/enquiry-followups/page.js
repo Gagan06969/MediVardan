@@ -58,20 +58,20 @@ export default function EnquiryFollowupsPage() {
       // Transform API data to followup format
       const transformedData = Array.isArray(data) ? data.map((lead, index) => ({
         srNo: index + 1,
-        visitorName: `${lead.FirstName || ''} ${lead.LastName || ''}`.trim(),
-        mobileNo: lead.PhoneNo1 || '',
-        enquiryDate: formatDate(lead.LeadDate),
-        sourceType: getSourceName(lead.LeadSourceID),
-        assignedToDoctor: lead.AssignTo || '',
-        assignedToCenter: getClinicName(lead.ClinicID),
-        emailId: lead.Emailid || '',
-        enquiryFor: lead.LeadFor || '',
-        telephoneNo: lead.PhoneNo2 || '',
-        followupDate: formatDate(lead.LeadDate), // Use lead date as followup date for now
+        visitorName: `${lead.firstName || lead.FirstName || ''} ${lead.lastName || lead.LastName || ''}`.trim(),
+        mobileNo: lead.mobile || lead.PhoneNo1 || '',
+        enquiryDate: formatDate(lead.enquiryDate || lead.LeadDate),
+        sourceType: lead.sourceName || getSourceName(lead.LeadSourceID),
+        assignedToDoctor: lead.assignTo || lead.AssignTo || '',
+        assignedToCenter: lead.clinicName || getClinicName(lead.ClinicID),
+        emailId: lead.email || lead.Emailid || '',
+        enquiryFor: lead.leadFor || lead.LeadFor || '',
+        telephoneNo: lead.phoneNo2 || lead.PhoneNo2 || '',
+        followupDate: formatDate(lead.enquiryDate || lead.LeadDate),
         totalFollowups: '0',
-        enquiryType: getEnquiryType(lead.InterestLevel),
+        enquiryType: lead.interestLevel ? getEnquiryType(lead.interestLevel) : 'Cold', // Adjust if API returns text status
         followupsStatus: '',
-        patientStatus: lead.PatientStatus || 'Co-operative',
+        patientStatus: lead.status || lead.PatientStatus || 'Co-operative',
       })) : [];
 
       setFollowups(transformedData);

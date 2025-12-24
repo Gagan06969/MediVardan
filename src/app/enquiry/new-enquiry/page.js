@@ -1,6 +1,7 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { getLeads } from "@/api/client/leads";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -32,109 +33,61 @@ export default function NewLeadPage() {
     toDate: "",
   });
 
-  // Sample lead data matching the screenshot
-  const leads = [
-    {
-      srNo: 1,
-      leadNo: "E166213",
-      name: "minakshi chhattise",
-      mobileNo: "9930401219",
-      clinicName: "Panvel",
-      sourceName: "Google",
-      status: "Patient",
-      date: "01-Dec-2025",
-    },
-    {
-      srNo: 2,
-      leadNo: "E161505",
-      name: "amit gharat",
-      mobileNo: "9619002384",
-      clinicName: "Panvel",
-      sourceName: "Google",
-      status: "Patient",
-      date: "13-Nov-2025",
-    },
-    {
-      srNo: 3,
-      leadNo: "E160559",
-      name: "santosh Ahire",
-      mobileNo: "9819827259",
-      clinicName: "Panvel",
-      sourceName: "Google",
-      status: "Patient",
-      date: "10-Nov-2025",
-    },
-    {
-      srNo: 4,
-      leadNo: "E159030",
-      name: "vikrant jadhav",
-      mobileNo: "8451962017",
-      clinicName: "Panvel",
-      sourceName: "Google",
-      status: "Patient",
-      date: "03-Nov-2025",
-    },
-    {
-      srNo: 5,
-      leadNo: "E159030",
-      name: "vikrant jadhav",
-      mobileNo: "8451962017",
-      clinicName: "Panvel",
-      sourceName: "Google",
-      status: "Patient",
-      date: "03-Nov-2025",
-    },
-    {
-      srNo: 6,
-      leadNo: "E159030",
-      name: "vikrant jadhav",
-      mobileNo: "8451962017",
-      clinicName: "Panvel",
-      sourceName: "Google",
-      status: "Patient",
-      date: "03-Nov-2025",
-    },
-    {
-      srNo: 7,
-      leadNo: "E145791",
-      name: "dattatray sonawane",
-      mobileNo: "9768656219",
-      clinicName: "Panvel",
-      sourceName: "Facebook",
-      status: "Patient",
-      date: "20-Aug-2025",
-    },
-    {
-      srNo: 8,
-      leadNo: "E144775",
-      name: "yogita dhende",
-      mobileNo: "9322325088",
-      clinicName: "Panvel",
-      sourceName: "Facebook",
-      status: "Patient",
-      date: "06-Aug-2025",
-    },
-    {
-      srNo: 9,
-      leadNo: "E144775",
-      name: "yogita dhende",
-      mobileNo: "9322325088",
-      clinicName: "Panvel",
-      sourceName: "Facebook",
-      status: "Patient",
-      date: "06-Aug-2025",
-    },
-    {
-      srNo: 10,
-      leadNo: "E143341",
-      name: "namdev patil",
-      mobileNo: "7715881924",
-      clinicName: "Panvel",
-      sourceName: "Facebook",
-      status: "Patient",
-      date: "22-Jul-2025",
-    },
-  ];
+  const [leads, setLeads] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  // Pagination states
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
+
+  // Fetch leads on component mount and when page changes
+  useEffect(() => {
+    fetchLeads();
+  }, [currentPage, pageSize]); // Add dependencies
+
+  const fetchLeads = async (searchFilters = filters) => {
+    try {
+      setIsLoading(true);
+      // Remove empty filters
+      const cleanFilters = Object.fromEntries(
+        Object.entries(searchFilters).filter(([_, v]) => v !== "")
+      );
+      
+      // Add pagination params
+      const queryParams = {
+        ...cleanFilters,
+        PageNumber: currentPage,
+        PageSize: pageSize
+      };
+
+      const data = await getLeads(queryParams);
+      
+      console.log('[DEBUG] Raw API Data (First Item):', data && data[0] ? data[0] : 'No data');
+      
+      // Transform API data to match table structure
+      const transformedLeads = Array.isArray(data) ? data.map((lead, index) => ({
+        srNo: (currentPage - 1) * pageSize + index + 1, // Calculate correct Sr No based on page
+        leadNo: lead.enquiryNo || "-",
+        name: `${lead.firstName || ""} ${lead.lastName || ""}`.trim() || "-",
+        mobileNo: lead.mobile || "-",
+        clinicName: lead.clinicName || "-",
+        sourceName: lead.sourceName || "-",
+        status: lead.status || "-",
+        date: lead.enquiryDate ? new Date(lead.enquiryDate).toLocaleDateString("en-GB", {
+          day: "2-digit",
+          month: "short",
+          year: "numeric"
+        }) : "-",
+        rawDate: lead.enquiryDate
+      })) : [];
+
+      setLeads(transformedLeads);
+    } catch (error) {
+      console.error("Failed to fetch leads:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const handleFilterChange = (field, value) => {
     setFilters((prev) => ({
@@ -144,11 +97,14 @@ export default function NewLeadPage() {
   };
 
   const handleSearch = () => {
-    // Add your search logic here
+    setCurrentPage(1); // Reset to page 1 on search
+    fetchLeads(filters);
   };
 
-  const handleExcelUpload = () => {
-    // Add your excel upload logic here
+  const handlePageChange = (newPage) => {
+    if (newPage > 0) {
+      setCurrentPage(newPage);
+    }
   };
 
   const handleAddNewLead = () => {
@@ -236,7 +192,8 @@ export default function NewLeadPage() {
           </Button>
         </div>
         <div className="text-sm font-medium text-gray-700 dark:text-gray-300">
-          Total : {leads.length}
+            {/* Optional: Show range if available, else just page */}
+             Page {currentPage} | Rows per page: {pageSize}
         </div>
       </div>
 
@@ -259,7 +216,14 @@ export default function NewLeadPage() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {leads.map((lead, index) => (
+                {isLoading ? (
+                  <TableRow>
+                    <TableCell colSpan={9} className="h-24 text-center">
+                      Loading leads...
+                    </TableCell>
+                  </TableRow>
+                ) : (
+                leads.map((lead, index) => (
                   <TableRow
                     key={index}
                     className="hover:bg-gray-50 dark:hover:bg-gray-800/50"
@@ -292,9 +256,33 @@ export default function NewLeadPage() {
                       </div>
                     </TableCell>
                   </TableRow>
-                ))}
+                )))}
               </TableBody>
             </Table>
+          </div>
+          
+          {/* Pagination Controls */}
+          <div className="p-4 border-t border-gray-200 dark:border-gray-800 flex items-center justify-between">
+              <Button
+                  variant="outline"
+                  onClick={() => handlePageChange(currentPage - 1)}
+                  disabled={currentPage === 1 || isLoading}
+                  className="min-w-[100px]"
+              >
+                  Previous
+              </Button>
+              <span className="text-sm text-gray-600 dark:text-gray-400">
+                  Page {currentPage}
+              </span>
+              <Button
+                  variant="outline"
+                  onClick={() => handlePageChange(currentPage + 1)}
+                  // Disable if we got fewer results than pageSize (indicates end of list)
+                  disabled={leads.length < pageSize || isLoading}
+                  className="min-w-[100px]"
+              >
+                  Next
+              </Button>
           </div>
         </CardContent>
       </Card>

@@ -31,50 +31,41 @@ const LEAD_SOURCE_MAP = {
  * @returns {Object} Transformed data for API
  */
 export const transformFormDataToAPI = (formData) => {
-  // Build the leadsModel object with all fields
-  const leadData = {
-    // Mode and IDs - using capitalized field names to match API
-    Mode: "1",
-    LeadID: 0, // 0 for new leads (not null)
-    ClinicID: formData.clinicName ? CLINIC_ID_MAP[formData.clinicName] : 1,
-
-    // Personal Information - capitalized to match API
-    FirstName: formData.firstName,
-    LastName: formData.lastName || "",
-    DOB: formData.dateOfBirth || null,
-    Age: formData.age ? parseInt(formData.age) : 0,
-    Gender: formData.gender || "",
-
-    // Contact Information - capitalized to match API
-    PhoneNo1: formData.mobileNo1,
-    PhoneNo2: formData.mobileNo2 || "",
-    Emailid: formData.email || "",
-
-    // Address Information - capitalized to match API (using default IDs)
-    Address: formData.address || "",
-    Area: formData.area || "",
-    CityID: 1, // Default city ID (required as number)
-    StateID: 1, // Default state ID (required as number)
-    CountryID: 1, // Default country ID (required as number)
-
-    // Lead Information - capitalized to match API
-    LeadSourceID: formData.leadSource ? LEAD_SOURCE_MAP[formData.leadSource] : 1,
-    LeadDate: formData.leadDate || new Date().toISOString().split('T')[0],
-    AssignTo: formData.assignTo || "",
-    PatientFollowup: formData.patientFollowup || "patient",
-    InterestLevel: formData.interestLevel ? parseInt(formData.interestLevel) : 1,
-    PatientStatus: formData.patientStatus || "cooperative",
-    ConversationDetails: formData.conversationDetails || "",
-    LeadFor: formData.leadFor || "",
-    ContactType: formData.contactType || "doctors",
-
-    // Status - capitalized to match API
-    IsActive: true,
-  };
-
-  // Return with leadsModel wrapper as required by API
   return {
-    leadsModel: leadData
+    // Original fields (based on user curl)
+    enquiryID: 0,
+    clinicID: formData.clinicName ? CLINIC_ID_MAP[formData.clinicName] : 0,
+    sourceid: formData.leadSource ? LEAD_SOURCE_MAP[formData.leadSource] : 0,
+    roleId: 0,
+    enquiryno: formData.leadNo || "",
+    enquiryDate: formData.leadDate ? new Date(formData.leadDate).toISOString() : new Date().toISOString(),
+    firstName: formData.firstName || "",
+    lastName: formData.lastName || "",
+    dateBirth: formData.dateOfBirth ? new Date(formData.dateOfBirth).toISOString() : new Date().toISOString(),
+    age: formData.age || "0",
+    gender: formData.gender || "",
+    address: formData.address || "",
+    countryId: 1,
+    stateid: 1,
+    cityid: 1,
+    area: formData.area || "",
+    email: formData.email || "",
+    mobile: formData.mobileNo1 || "",
+    telephone: formData.mobileNo2 || "",
+    status: formData.patientFollowup || "Patient",
+    folllowupdate: new Date().toISOString(),
+    interestLevel: formData.interestLevel || "1",
+    interestLevelCode: formData.interestLevel || "1",
+    createdBy: 1,
+    receivedByEmpId: 0,
+    assignToEmpId: 0,
+    telecallerToEmpId: 0,
+    conversation: formData.conversationDetails || "",
+    treatmentID: 0,
+    modifiedBy: 0,
+    isActive: true,
+    pstatus: formData.patientStatus || "Co-operative",
+    mode: 1 // Insert mode
   };
 };
 

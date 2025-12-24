@@ -16,7 +16,7 @@ import {
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Settings } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { upsertLead } from "@/services/leadsService";
+import { upsertLead } from "@/api/client/leads";
 import { transformFormDataToAPI } from "@/utils/leadsTransformers";
 
 export default function AddLeadFormPage() {
@@ -103,11 +103,13 @@ export default function AddLeadFormPage() {
 
       console.log("Lead added successfully:", response);
 
+
+
       // Check if using mock data and show appropriate message
       const isMock = response.isMockData || false;
       const successMessage = isMock
         ? "Lead added successfully!\n\n⚠️ Note: Using mock data - changes are NOT saved to the external database."
-        : "Lead added successfully!\n\n✅ Data has been saved to the backend API.";
+        : `Lead added successfully!\n\n✅ Data has been saved to the backend API.\n\nServer Response: ${response.debugResponse}`;
 
       alert(successMessage);
 

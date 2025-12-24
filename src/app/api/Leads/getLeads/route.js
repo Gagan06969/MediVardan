@@ -1,117 +1,101 @@
 import { NextResponse } from 'next/server';
 import { getMockLeads } from '@/api/mocks/leads.js';
-
-const API_BASE_URL = "https://bmetrics.in/APIDemo/api";
-
-// JWT Authentication Token (provided by user)
-const AUTH_TOKEN = "eyJhbGciOiJodHRwOi8vd3d3LnczLm9yZy8yMDAxLzA0L3htbGRzaWctbW9yZSNobWFjLXNoYTI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoiMSIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL2VtYWlsYWRkcmVzcyI6IkFkbWluIiwiSXNDdXN0b21lciI6ImZhbHNlIiwiZXhwIjoxNzY2MzQ5MTI5LCJpc3MiOiJodHRwczovL215d2ViYXBpLmNvbSIsImF1ZCI6Imh0dHBzOi8vbXl3ZWJhcGkuY29tIn0.Vgn8u7uXj96rsX3aWFN4jp8wM_7A6OBv_oKlLbXzpGY";
+import axiosClient from '@/lib/axiosClient';
 
 // Flag to enable/disable mock data fallback
-const USE_MOCK_FALLBACK = true;
+const USE_MOCK_FALLBACK = false;
 
-// Function to get authentication token
-async function getAuthToken() {
-  // Return the provided JWT token directly
-  return AUTH_TOKEN;
-}
+// Fallback token for testing/dev when header is missing
+const FALLBACK_TOKEN = "eyJhbGciOiJodHRwOi8vd3d3LnczLm9yZy8yMDAxLzA0L3htbGRzaWctbW9yZSNobWFjLXNoYTI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoiMSIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL2VtYWlsYWRkcmVzcyI6IkFkbWluIiwiSXNDdXN0b21lciI6ImZhbHNlIiwiZXhwIjoxNzY2NTgzNzA1LCJpc3MiOiJodHRwczovL215d2ViYXBpLmNvbSIsImF1ZCI6Imh0dHBzOi8vbXl3ZWJhcGkuY29tIn0.w09KxWQ82EFW5TrT9Gw6mVwPcolWmtUzhj2hnrf2am8";
 
 export async function GET(request) {
   try {
     console.log('Fetching leads list...');
 
-    // Get authentication token
-    const token = await getAuthToken();
+    // Get query parameters from the request
+    const { searchParams } = new URL(request.url);
+    const queryString = searchParams.toString();
+    
+    // Construct potential POST payload for search/pagination
+    const searchPayload = {
+      PageSize: searchParams.get('PageSize') || 100,
+      PageNumber: searchParams.get('PageNumber') || 1,
+      // Map common filters
+      firstName: searchParams.get('firstName') || "",
+      mobile: searchParams.get('mobile') || "",
+      // Force wide date range if not provided
+      fromDate: searchParams.get('fromDate') || "1900-01-01T00:00:00",
+      toDate: searchParams.get('toDate') || "2100-01-01T00:00:00",
+      // Support legacy keys if needed
+      Name: searchParams.get('firstName') || "",
+      MobileNo: searchParams.get('mobile') || ""
+    };
 
-    console.log('Using token for leads fetch:', token);
+    console.log('[DEBUG] Attempting POST search with payload:', JSON.stringify(searchPayload));
 
-    const response = await fetch(`${API_BASE_URL}/Leads/getLeads`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`,
-      },
-    });
+    // Extract auth header from incoming request to pass to backend
+    let authHeader = request.headers.get('authorization');
+    
+    if (!authHeader) {
+        console.log('[DEBUG] No Authorization header found, using fallback token');
+        authHeader = `Bearer ${FALLBACK_TOKEN}`;
+    }
 
-    console.log('Get leads response status:', response.status);
-
-    // If unauthorized, clear token cache and retry once
-    if (response.status === 401) {
-      cachedToken = null;
-      const newToken = await getAuthToken();
-
-      const retryResponse = await fetch(`${API_BASE_URL}/Leads/getLeads`, {
-        method: 'GET',
+    const requestConfig = {
         headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${newToken}`,
-        },
-      });
-
-      const retryResponseText = await retryResponse.text();
-      console.log('Retry response:', retryResponseText);
-
-      if (!retryResponse.ok) {
-        if (USE_MOCK_FALLBACK) {
-          console.log('⚠️  External API failed after retry, using mock data for leads list');
-          const mockLeads = getMockLeads();
-          return NextResponse.json(mockLeads, {
-            headers: {
-              'X-Data-Source': 'mock',
-              'X-Warning': 'Mock data - external API unavailable'
-            }
-          });
+            'Authorization': authHeader // Pass the incoming token or fallback
         }
-        return NextResponse.json(
-          { error: `HTTP error! status: ${retryResponse.status}`, body: retryResponseText },
-          { status: retryResponse.status }
-        );
-      }
+    };
 
-      const retryData = JSON.parse(retryResponseText);
-      return NextResponse.json(retryData);
-    }
+    // Strategy: Try POST first (common for advanced search), fall back to GET
+    let response;
+    let methodUsed = "POST";
 
-    if (!response.ok) {
-      // Handle 404 Not Found or 500 errors with mock fallback
-      if ((response.status === 404 || response.status === 500) && USE_MOCK_FALLBACK) {
-        console.log('⚠️  External API endpoint not found or failed, using mock data for leads list');
-        const mockLeads = getMockLeads();
-        return NextResponse.json(mockLeads, {
-          headers: {
-            'X-Data-Source': 'mock',
-            'X-Warning': 'Mock data - external API unavailable'
-          }
-        });
-      }
-
-      const responseText = await response.text();
-      console.error('Get leads failed:', responseText);
-      return NextResponse.json(
-        { error: `HTTP error! status: ${response.status}`, body: responseText },
-        { status: response.status }
-      );
-    }
-
-    const responseText = await response.text();
-    console.log('Get leads response body:', responseText);
-
-    // Try to parse as JSON
-    let data;
     try {
-      data = JSON.parse(responseText);
-    } catch {
-      // If not JSON, return empty array
-      data = [];
+        response = await axiosClient.post('/api/Leads/GetAllLeads', searchPayload, requestConfig);
+    } catch (postError) {
+        // Log detailed error from the POST attempt
+        if (postError.response) {
+            console.log(`[DEBUG] POST Error Status: ${postError.response.status}`);
+            console.log(`[DEBUG] POST Error Data:`, postError.response.data);
+        } else {
+             console.log(`[DEBUG] POST Error: ${postError.message}`);
+        }
+
+        // If POST fails with 404 or 405, fallback to GET
+        if (postError.response && (postError.response.status === 405 || postError.response.status === 404)) {
+             console.log(`[DEBUG] POST search failed (${postError.message}), falling back to GET`);
+             methodUsed = "GET";
+             
+             // Ensure date params are present for GET fallback
+             if (!searchParams.has('fromDate')) searchParams.append('fromDate', '1900-01-01');
+             if (!searchParams.has('toDate')) searchParams.append('toDate', '2100-01-01');
+             
+             const getQueryString = searchParams.toString();
+             response = await axiosClient.get(`/api/Leads/GetAllLeads${getQueryString ? `?${getQueryString}` : ''}`, requestConfig);
+        } else {
+            throw postError; // Re-throw other errors
+        }
     }
+
+    console.log(`[DEBUG] ${methodUsed} Response Status:`, response.status);
+    
+    const data = response.data;
 
     console.log('Leads fetch successful, count:', Array.isArray(data) ? data.length : 'N/A');
+    if (Array.isArray(data) && data.length > 0) {
+        // Log FULL first item to debug schema mismatch
+        console.log('[DEBUG] Full First Item:', JSON.stringify(data[0], null, 2));
+    }
 
     return NextResponse.json(data);
   } catch (error) {
-    console.error('Error fetching leads:', error);
-    console.error('Error stack:', error.stack);
+    console.error('Error fetching leads:', error.message);
+    if (error.response) {
+         console.error('[DEBUG] Full Error Response Data:', JSON.stringify(error.response.data, null, 2));
+    }
 
-    // Fallback to mock data on any error
+    // Fallback to mock data on any error if enabled
     if (USE_MOCK_FALLBACK) {
       console.log('⚠️  Exception occurred, using mock data for leads list');
       const mockLeads = getMockLeads();
@@ -123,13 +107,16 @@ export async function GET(request) {
       });
     }
 
+    const status = error.response ? error.response.status : 500;
+    const errorMessage = error.response ? error.response.data : error.message;
+
     return NextResponse.json(
       {
         error: 'Failed to fetch leads',
-        details: error.message,
+        details: errorMessage,
         stack: process.env.NODE_ENV === 'development' ? error.stack : undefined
       },
-      { status: 500 }
+      { status: status }
     );
   }
 }

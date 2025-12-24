@@ -6,8 +6,17 @@ const axiosClient = axios.create({
 
 axiosClient.interceptors.request.use(
     (config) => {
-        const token = localStorage.getItem("token");
-        if (token) config.headers.Authorization = `Bearer ${token}`;
+        // Check for both token keys to support different auth flows
+        // SAFEGUARD: Check if running in browser before accessing localStorage
+        let token = null;
+        if (typeof window !== 'undefined' && window.localStorage) {
+             token = localStorage.getItem("token") || localStorage.getItem("jwt_token");
+        }
+        
+        // Only set the header if we found a token and it isn't already set (e.g. by manual override)
+        if (token && !config.headers.Authorization) {
+            config.headers.Authorization = `Bearer ${token}`;
+        }
 
         // Clean empty params: remove keys with undefined, null or empty string values
         if (config.params && typeof config.params === 'object') {
@@ -25,7 +34,7 @@ axiosClient.interceptors.request.use(
 
         // Debug logging in development
         if (process.env.NODE_ENV === 'development') {
-            const fullUrl = `${config.baseURL}${config.url}`;
+            const fullUrl = `${config.baseURL || ''}${config.url || ''}`;
             console.log('[Axios Request]', {
                 method: config.method?.toUpperCase(),
                 url: fullUrl,

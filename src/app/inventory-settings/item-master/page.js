@@ -1,0 +1,188 @@
+"use client";
+
+import React, { useState } from "react";
+import { Settings, Plus, Search, Pencil, Trash2, FileSpreadsheet } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { cn } from "@/lib/utils";
+
+export default function ItemMaster() {
+  const [searchTerm, setSearchTerm] = useState("");
+
+  // Mock data for Item Master
+  const tableData = [
+    {
+      id: 1,
+      inventoryType: "MATERIAL",
+      itemName: "Cold cure Powder",
+      brandName: "DPI",
+      packagingType: "Bottle",
+      price: "169.50"
+    },
+    {
+      id: 2,
+      inventoryType: "MATERIAL",
+      itemName: "cold cure liquid",
+      brandName: "DPI",
+      packagingType: "Bottle",
+      price: "169.50"
+    },
+    {
+      id: 3,
+      inventoryType: "MATERIAL",
+      itemName: "Composite",
+      brandName: "SafeEndo",
+      packagingType: "Syringe",
+      price: "562.50"
+    },
+    {
+      id: 4,
+      inventoryType: "MATERIAL",
+      itemName: "Epoxyseal",
+      brandName: "SafeEndo",
+      packagingType: "Syringe",
+      price: "1120.00"
+    },
+    {
+      id: 5,
+      inventoryType: "MATERIAL",
+      itemName: "Calahyd - Rc",
+      brandName: "MAARC",
+      packagingType: "Syringe",
+      price: "885.00"
+    },
+    {
+      id: 6,
+      inventoryType: "MEDICINE",
+      itemName: "Aqua Mouthwash",
+      brandName: "Dente 91",
+      packagingType: "Bottle",
+      price: "37.12"
+    },
+    {
+      id: 7,
+      inventoryType: "MEDICINE",
+      itemName: "sensitive toothpaste",
+      brandName: "Dente 91",
+      packagingType: "Tube",
+      price: "134.92"
+    },
+    {
+      id: 8,
+      inventoryType: "MEDICINE",
+      itemName: "DB Toothpaste",
+      brandName: "Dente 91",
+      packagingType: "Tube",
+      price: "168.81"
+    },
+    {
+      id: 9,
+      inventoryType: "MEDICINE",
+      itemName: "She Toothpaste",
+      brandName: "Dente 91",
+      packagingType: "Tube",
+      price: "148.47"
+    },
+    {
+      id: 10,
+      inventoryType: "MEDICINE",
+      itemName: "mouthwash",
+      brandName: "Dente 91",
+      packagingType: "Bottle",
+      price: "134.91"
+    }
+  ];
+
+  return (
+    <div className="p-6 bg-white dark:bg-gray-900 min-h-screen space-y-6">
+      {/* Header */}
+      <div className="flex items-center gap-2 border-b border-gray-200 dark:border-gray-800 pb-4">
+        <Settings className="w-5 h-5 text-red-500" />
+        <h1 className="text-lg font-bold text-red-500 uppercase tracking-wide">
+          ITEM
+        </h1>
+      </div>
+
+      {/* Filters */}
+      <div className="space-y-4">
+          <div className="flex justify-between items-end">
+             <div className="flex-1 max-w-4xl space-y-2">
+                <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Search</label>
+                 <div className="flex gap-2">
+                    <Input
+                        placeholder="Name"
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                        className="bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-700 max-w-xl"
+                    />
+                    <Button className="bg-[#D35400] hover:bg-[#A04000] text-white px-6 font-medium shadow-sm transition-all whitespace-nowrap">
+                        Search
+                    </Button>
+                     <Button className="bg-[#D35400] hover:bg-[#A04000] text-white px-6 font-medium shadow-sm transition-all whitespace-nowrap">
+                        Clear
+                    </Button>
+                </div>
+            </div>
+
+            <Button className="bg-[#0e7490] hover:bg-[#0891b2] text-white px-6 font-medium shadow-sm transition-all whitespace-nowrap">
+                Add New Item
+            </Button>
+          </div>
+      </div>
+
+      {/* Table */}
+       <div className="border border-gray-200 dark:border-gray-700 rounded-t-lg overflow-hidden overflow-x-auto">
+        <Table>
+          <TableHeader className="bg-[#E8F8F5] dark:bg-gray-800">
+            <TableRow className="hover:bg-[#E8F8F5] dark:hover:bg-gray-700/50 border-gray-200 dark:border-gray-700">
+              <TableHead className="font-bold text-gray-700 dark:text-gray-300 w-[60px]">Sr. No.</TableHead>
+              <TableHead className="font-bold text-gray-700 dark:text-gray-300">Inventory Type</TableHead>
+              <TableHead className="font-bold text-gray-700 dark:text-gray-300">Item Name</TableHead>
+              <TableHead className="font-bold text-gray-700 dark:text-gray-300">Brand Name</TableHead>
+              <TableHead className="font-bold text-gray-700 dark:text-gray-300">Packaging Type</TableHead>
+              <TableHead className="font-bold text-gray-700 dark:text-gray-300">Price</TableHead>
+              <TableHead className="font-bold text-gray-700 dark:text-gray-300 w-[100px] text-center"></TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {tableData.map((row) => (
+              <TableRow key={row.id} className="border-gray-200 dark:border-gray-700 dark:hover:bg-gray-800/50">
+                <TableCell className="dark:text-gray-300">{row.id}</TableCell>
+                <TableCell className="dark:text-gray-300">{row.inventoryType}</TableCell>
+                <TableCell className="dark:text-gray-300">{row.itemName}</TableCell>
+                <TableCell className="dark:text-gray-300">{row.brandName}</TableCell>
+                <TableCell className="dark:text-gray-300">{row.packagingType}</TableCell>
+                <TableCell className="dark:text-gray-300">{row.price}</TableCell>
+                <TableCell className="dark:text-gray-300">
+                    <div className="flex items-center justify-center gap-4">
+                        <Button variant="ghost" size="icon" className="h-4 w-4 text-gray-600 hover:text-blue-600">
+                            <Pencil className="h-4 w-4" />
+                        </Button>
+                        <Button variant="ghost" size="icon" className="h-4 w-4 text-gray-600 hover:text-red-600">
+                            <Trash2 className="h-4 w-4" />
+                        </Button>
+                    </div>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </div>
+
+       {/* Footer / Pagination */}
+       <div className="flex justify-end items-center pt-2">
+          <div className="flex gap-2 text-sm text-blue-600 dark:text-blue-400">
+             <span className="cursor-pointer hover:underline p-1">12345678910... &gt;&gt;</span>
+          </div>
+        </div>
+    </div>
+  );
+}

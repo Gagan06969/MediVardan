@@ -505,9 +505,38 @@ export default function Sidebar({ open }) {
     ]
   };
 
+  // Add Inventory Settings menu
+  const inventorySettingsMenu = {
+    menuID: 'inventory-settings-menu',
+    menuName: 'Inventory Settings',
+    menuPath: null,
+    menuChild: [
+      {
+        menuID: 'vendor',
+        menuName: 'Vendor',
+        menuPath: '/inventory-settings/vendor'
+      },
+      {
+        menuID: 'item-master',
+        menuName: 'Item Master',
+        menuPath: '/inventory-settings/item-master'
+      },
+      {
+        menuID: 'brand',
+        menuName: 'Brand',
+        menuPath: '/inventory-settings/brand'
+      },
+      {
+        menuID: 'packaging-type',
+        menuName: 'Packaging Type',
+        menuPath: '/inventory-settings/packaging-type'
+      }
+    ]
+  };
+
   // Append Appointment, Invoice, Lead, Patient Details, Doctor, Accounts, and Report menus to the data
   // Append Appointment, Invoice, Lead, Patient Details, Doctor, Accounts, and Report menus to the data
-  const menuData = data ? [...data, doctorMenu, appointmentMenu, leadMenu, invoiceMenu, patientDetailsMenu, reportMenu, inventoryMenu, accountsMenu, helpMenu, enquirySettingsMenu, userSettingsMenu] : [doctorMenu, appointmentMenu, leadMenu, invoiceMenu, patientDetailsMenu, reportMenu, inventoryMenu, accountsMenu, helpMenu, enquirySettingsMenu, userSettingsMenu];
+  const menuData = data ? [...data, doctorMenu, appointmentMenu, leadMenu, invoiceMenu, patientDetailsMenu, reportMenu, inventoryMenu, inventorySettingsMenu, accountsMenu, helpMenu, enquirySettingsMenu, userSettingsMenu] : [doctorMenu, appointmentMenu, leadMenu, invoiceMenu, patientDetailsMenu, reportMenu, inventoryMenu, inventorySettingsMenu, accountsMenu, helpMenu, enquirySettingsMenu, userSettingsMenu];
 
   if (isLoading) return <div>Loading...</div>;
 
